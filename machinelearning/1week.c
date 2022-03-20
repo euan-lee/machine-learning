@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h> 
 //텍스트 파일 읽기
 //읽은 함수 데이터에 집어 넣기
 //결과값 y 아웃풋 데이터에 넣기
@@ -35,7 +36,7 @@ void input_data_on_text_and_file_open(){
 }
 
 void input_w1_w1_setha(){
-        printf("plz put w1 and w2");
+        printf("plz put w1 and w2 setha");
         //입력값 범위 조정해줘잉
         scanf("%lf %lf %lf",&w1,&w2,&setha);
         printf("w1,w2,setha is %f %f %f",w1,w2,setha);
@@ -43,8 +44,11 @@ void input_w1_w1_setha(){
 
 int perceptron(double x1,double x2,double w1,double w2,double setha){
     printf("x1:%lf x2:%lf w1:%lf w2:%lf setha:%lf\n",x1,x2,w1,w2,setha);
-    Sum=w1*x1+w2*x2;
+    Sum=round(100*x1*w1)/100+round(100*x2*w2)/100;
+    printf("x1*w1 is %lf",round(100*x1*w1)/100);
+    printf("x2*w2 is %lf",round(100*x2*w2)/100);
     printf("sum is %lf\n",Sum);
+    setha=round(100*setha)/100;
     if(Sum>setha){
         flag=1;
         printf("flag:%d",flag);
@@ -68,9 +72,9 @@ void read_file_and_find_y(){
     }
     else{
         printf("file open success (for read)\n");
-        while(!((fscanf(fp, "%lf %lf",&data.x1,&data.x2))==EOF)){ 
-            printf("result is%d\n",perceptron(data.x1,data.x2,w1,w2,setha));                 
-         if(flag==1){
+        while(!((fscanf(fp, "%lf %lf",&data.x1,&data.x2))==EOF)){
+        perceptron(data.x1,data.x2, w1, w2,setha);                                                                                                                                                                                                                                                                                          
+        if(flag==1){                                                                                                                                
             fprintf(fp2," %d\n",flag);
         }
         else{
@@ -91,6 +95,9 @@ int main (){
     read_file_and_find_y();
       
 }
+
+
+
 
 
 
