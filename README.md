@@ -9,5 +9,3 @@
 https://www.youtube.com/watch?v=vOO-oLS0H68
 
 https://www.acmicpc.net/blog/view/37
-
-환장한다 ㅠㅠ
