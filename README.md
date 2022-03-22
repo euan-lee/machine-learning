@@ -8,4 +8,12 @@
 부동 소수점 에러:
 https://www.youtube.com/watch?v=vOO-oLS0H68
 
-https://www.acmicpc.net/blog/view/37
+https://www.acmicpc.net/blog/view/3
+
+float 에러를 해결하려다  다른 사람의 프로젝트를 찾아보다가 bias라는 키워드를 얻었다.
+
+내가 처한 bias는 algorithm calculation bias이다.
+
+Data Discrimination/Bias - bias that occurs when predefined data types or data sources are intentionally or unintentionally treated differently than others.
+
+https://www.techtarget.com/searchenterpriseai/definition/machine-learning-bias-algorithm-bias-or-AI-bias
