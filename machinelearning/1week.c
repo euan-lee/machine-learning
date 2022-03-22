@@ -44,10 +44,9 @@ void input_w1_w1_setha(){
 
 int perceptron(double x1,double x2,double w1,double w2,double setha){
     printf("x1:%lf x2:%lf w1:%lf w2:%lf setha:%lf\n",x1,x2,w1,w2,setha);
-    Sum=round(100*x1*w1)/100+round(100*x2*w2)/100;
-    printf("x1*w1 is %lf",round(100*x1*w1)/100);
-    printf("x2*w2 is %lf",round(100*x2*w2)/100);
-    printf("sum is %lf\n",Sum);
+    
+    Sum=(x1*w1)+(x2*w2);
+    Sum=round(100*Sum)/100;
     setha=round(100*setha)/100;
     if(Sum>setha){
         flag=1;
@@ -95,6 +94,7 @@ int main (){
     read_file_and_find_y();
       
 }
+
 
 
 
