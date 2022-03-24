@@ -3,7 +3,7 @@
 #include <math.h> 
 int x1[]={0,1};
 int x2[]={0,1};
-int visited[3]={0,};
+int visited[4]={0,};
 double Sum=0.0;
 double w1=0.0;
 double w2=0.0;
