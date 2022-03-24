@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <math.h> 
 
+#include <math.h> 
 int x1[]={0,1};
 int x2[]={0,1};
 int visited[3]={0,};
@@ -42,7 +42,11 @@ void And(){
     }
 }
 
-
+int visit_reset(){
+    for(int i=0;i<4;i++){
+        visited[i]=0;
+    }
+}
 
 void perceptron(int i,int j,int k){
             Sum=(x1[i]*w1)+(x2[j]*w2);
@@ -102,10 +106,8 @@ void check(){
 
         }
         if(break_flag==1){
-            visited[0]=0;
-            visited[1]=0;
-            visited[2]=0;
-            visited[3]=0;
+            visit_reset();
+            printf("visit reset");
             break_flag=0;
             break;
         }
@@ -149,8 +151,8 @@ void input_w1_w1_tetha(){
 
 int main(){
     input_w1_w1_tetha();//ok
-   //Or();//ok
-    And();
+    Or();//ok
+    //And();
     go(0);//ok
   
  
