@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h> 
 
 int x1[]={0,1};
 int x2[]={0,1};
