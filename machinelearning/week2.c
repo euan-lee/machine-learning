@@ -1,6 +1,6 @@
 #include <stdio.h>
-
 #include <math.h> 
+
 int x1[]={0,1};
 int x2[]={0,1};
 int visited[3]={0,};
@@ -28,6 +28,21 @@ void Or(){
 
     }
 }
+
+void And(){
+    int  num=0;
+    printf("and operation");
+    for(int i=0;i<2;i++){
+        for(int j=0;j<2;j++){
+            printf("x1%d x2 %d\n",x1[i],x2[j]);
+            y[num]=x1[i]*x2[j];
+            printf("y is %d\n",y[num]);
+            num++;
+        }
+    }
+}
+
+
 
 void perceptron(int i,int j,int k){
             Sum=(x1[i]*w1)+(x2[j]*w2);
@@ -134,8 +149,10 @@ void input_w1_w1_tetha(){
 
 int main(){
     input_w1_w1_tetha();//ok
-    Or();//ok
-    go(0);
+   //Or();//ok
+    And();
+    go(0);//ok
   
+ 
 }
 
