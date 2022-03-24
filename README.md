@@ -9,3 +9,16 @@
 https://www.youtube.com/watch?v=vOO-oLS0H68
 
 https://www.acmicpc.net/blog/view/3
+
+
+선언을 안했는데 데이터가 할당되는 경우가 있음
+```c
+#include<stdio.h>
+int arr[3]={1,1,1,1};
+int main(){
+arr[4]=1;
+printf("%d",arr[4]);
+
+}
+
+```
