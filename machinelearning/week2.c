@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <math.h> 
 
+#include <math.h> 
 int x1[]={0,1};
 int x2[]={0,1};
 int visited[3]={0,};
@@ -103,12 +103,19 @@ void check(){
  
      if(cnt==100){
          printf("can't get the result\n");
-         return 0;
+         return ;
      }
    
     if(visited[0]==1&&visited[1]==1&&visited[2]==1&&visited[3]==1){
         printf("happy ending\n");
-        return 0;
+        printf("w1:%lf w2:%lf\n",w1,w2);
+        FILE *fp = fopen("hello.txt", "w");    // hello.txt 파일을 쓰기 모드(w)로 열기.
+        fprintf(fp,"%lf\n",w1); 
+        fprintf(fp,"%lf\n",w2); 
+         fprintf(fp,"%lf\n",tetha); 
+        fclose(fp);    // 파일 포인터 닫기
+
+        return ;
     }
     
      printf("cnt is %d\n",cnt);
@@ -131,3 +138,4 @@ int main(){
     go(0);
   
 }
+
