@@ -23,3 +23,5 @@ printf("%d",arr[4]);
 }
 
 ```
+
+다음주차부터 breaking point 찍을것!!
