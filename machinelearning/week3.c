@@ -6,13 +6,13 @@ int x1[4]={0,0,1,1};
 int x2[4]={0,1,0,1};
 int target[4]={0};
 double sum=0.0;
-double w1=0.0;
+double w1=2.0;
 double w2=0.0;
-double Sum=0.0;
 double tetha=0.0;
 int line_check[4]={0,};
 int cal_y[4]={0,};
 double err_sum=0;
+int cnt=0;
 
 void Line_check_reset(){
 	for(int line=0;line<4;line++){
@@ -57,30 +57,21 @@ void Perceptron(int line){
     else{
         cal_y[line]=0;
     }  
-	printf("---------------");
-	printf("line is%d\n",line);
-	printf("x1 is %d\n",x1[line]);
-	printf("x2 is %d\n",x2[line]);
-	printf("target is %d\n",target[line]);
-	printf("sum is %lf\n",sum);
-	printf("tetha is %lf\n",tetha);
-	printf("w1 is %lf\n",w1);
-	printf("w2 is %lf\n",w2);
-
+	
 	if(cal_y[line]==target[line]){
 		line_check[line]=1;
-		printf("correct AND err is 0\n");
+		printf("line %d correct\n",line);
+		printf("w1,w2,setha is %f %f %f\n",w1,w2,tetha);
 	}
 	else{
+		printf("w1,w2,setha is %f %f %f\n",w1,w2,tetha);
+		printf("line %d error \n",line);
 		w1=w1+w1*etha*(target[line]-cal_y[line])*x1[line];
 		w2=w2+w2*etha*(target[line]-cal_y[line])*x2[line];
-		printf("after w1 is %lf\n",w1);
-		printf("after w2 is %lf\n",w2);
 		err_sum=err_sum+(0.5)*(target[line]-cal_y[line])*(target[line]-cal_y[line]);
-		
+		printf("err_desu %lf\n",err_sum); 
 	}
 }
-
 
 void Check(){
 	for(int line=0;line<4;line++){
@@ -88,39 +79,44 @@ void Check(){
 	}
 }
 
-void Go(int cnt){
-    
-	if(cnt==5){//100회 반복시!!
-        printf("can't get the result\n");         
-		return ;
-     }
-   
-    if(line_check[0]==1&&line_check[1]==1&&line_check[2]==1&&line_check[3]==1){//조건이 전부 맞으면!!
-        printf("happy ending\n");
-		FILE *fp = fopen("hello.txt", "w");    // hello.txt 파일을 쓰기 모드(w)로 열기.
-        fprintf(fp,"%lf\n",w1); 
-        fprintf(fp,"%lf\n",w2); 
-        fprintf(fp,"%lf\n",tetha); 
-        fclose(fp);    // 파일 포인터 닫기
-        return ;
-    }
-	
-	Line_check_reset();
-  //  fprintf(fp3,"%lf\n",w1); 
-  //  fprintf(fp3,"%lf\n",w2); 
-    Check();
-//	fprintf(fp3,"%lf\n",err_sum); 
-	err_sum=0.0;
-    cnt++;
-    Go(cnt);
-	
- }
-
 int main(){
+
 	Input_w1_w1_tetha();
 	//And();
-	Or();
-	// hello.txt 파일을 쓰기 모드(w)로 열기.
-	Go(0); 
+	Or();	
+
+	FILE *w1_desu = fopen("w1.txt", "w");    
+	FILE *w2_desu = fopen("w2.txt", "w");  
+	FILE *err_desu = fopen("err.txt", "w");   
+
+	while(1){
+	
+	if(cnt==5){//100회 반복시!!
+		fclose(w1_desu);
+		fclose(w2_desu); 
+		fclose(err_desu);  
+		break;
+    }
+
+	if(line_check[0]==1&&line_check[1]==1&&line_check[2]==1&&line_check[3]==1){//조건이 전부 맞으면!!
+    	printf("happy ending\n");
+		fclose(w1_desu);
+		fclose(w2_desu); 
+		fclose(err_desu);   
+    	break;
+    }
+	Line_check_reset();
+	Check();
+	printf("cnt is %d\n",cnt);
+	printf("why w1 is %lf\n",w1);
+	printf("why w2 is %lf\n",w2);
+	printf("err_desu %lf\n",err_sum); 
+	fprintf(w1_desu,"%lf\n",w1);
+    fprintf(w2_desu,"%lf\n",w2);
+	fprintf(err_desu,"%lf\n",err_sum);  
+	cnt++;
+	err_sum=0.0;
+	}
+
 	
 }
