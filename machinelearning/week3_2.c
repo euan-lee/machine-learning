@@ -120,10 +120,10 @@ int main(){
              
             Perceptron(x1[i],x2[i],data.w1,data.w2,target[i]);//줄마다 perceptorn 연산 연산후 각줄의 에러 더하기
 		    
-        }
+            }
 	    
-    fprintf(fp2,"%.1lf\n",err_sum);//9.perceptron 함수로 줄 4개를 확인한 다음 나온 err합을 err 파일에 입력
-    err_sum=0;    //10.err를 초기화
+   	fprintf(fp2,"%.1lf\n",err_sum);//9.perceptron 함수로 줄 4개를 확인한 다음 나온 err합을 err 파일에 입력
+    	err_sum=0;    //10.err를 초기화
     }
     fclose(fp);//11.파일 닫기
     fclose(fp2);
