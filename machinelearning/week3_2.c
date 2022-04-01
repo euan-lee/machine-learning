@@ -17,7 +17,7 @@ struct data{
     double w2;
 };
 
-void input_w1_w2_on_text_and_file_open(){
+void input_w1_w2_on_text_and_file_open(){//w1,w2 text에입력 파일 오픈
     FILE *fp;
     fp = fopen("w1w2.txt", "w");//없으면 만듦
     
@@ -37,13 +37,13 @@ void input_w1_w2_on_text_and_file_open(){
      fclose(fp);
 }
 
-void Input_tetha(){
+void Input_tetha(){//tehta 입력
         printf(" tetha");
         scanf("%lf",&tetha);
         printf("setha is %lf \n",tetha);
     }
 
-void And(){
+void And(){//and 연산
 	for(int line=0;line<4;line++){
 		printf("x1 is %d",x1[line]);
 		printf("x2 is %d",x2[line]);
@@ -52,7 +52,7 @@ void And(){
 	}
 };
 
-void Or(){
+void Or(){//or 연산
 	for(int line=0;line<4;line++){
 		printf("x1 is %d",x1[line]);
 		printf("x2 is %d",x2[line]);
@@ -64,7 +64,7 @@ void Or(){
 	}
 };
 	
-void Perceptron(int x1,int x2,double w1,double w2,int target){
+void Perceptron(int x1,int x2,double w1,double w2,int target){//play the perceptron
 
 	double sum=0.0;
 	int y_cal=0;
@@ -89,7 +89,7 @@ void Perceptron(int x1,int x2,double w1,double w2,int target){
 	}
 }
 
-void Choose_or_and(){
+void Choose_or_and(){//and or중 1선택
     int choice=4;
     printf("press 1 :or press2 :and\n");
     scanf("%d",&choice);
@@ -104,26 +104,27 @@ void Choose_or_and(){
 }
 
 int main(){
-    Choose_or_and();
-    input_w1_w2_on_text_and_file_open();//ok
-	Input_tetha();//ok
-    FILE *fp = fopen("w1w2.txt", "r");//ok
-    FILE *fp2 = fopen("err.txt", "w");//ok
+
+
+    Choose_or_and();//1.and or 중 선택
+    input_w1_w2_on_text_and_file_open();//2.w1-w2를 -10부터 10까지 입력
+	Input_tetha();//3.세타 입력
+    FILE *fp = fopen("w1w2.txt", "r");//4.w1w2 읽기모드로 열기
+    FILE *fp2 = fopen("err.txt", "w");//5.err 읽기모드로 열기
     struct data data;//ok
-    while(!((fscanf(fp, "%lf %lf",&data.w1,&data.w2))==EOF)){
-       printf("new w1,w1\n");
-        printf("w1,w2 is new %lf %lf\n",data.w1,data.w2);
-        for(int i=0;i<4;i++){
+    while(!((fscanf(fp, "%lf %lf",&data.w1,&data.w2))==EOF)){//6.w1w2데이터 한줄씩 읽기
+
+        printf("w1,w2 is new %lf %lf\n",data.w1,data.w2);//7.w1,w2데이터 확인
+        for(int i=0;i<4;i++){//8.for문을 돌면서 4개의 줄확인 //00 01 10 11//
             Perceptron(x1[i],x2[i],data.w1,data.w2,target[i]);
         }
-
-    printf("w1,w2,err_sum is new %lf %lf %lf\n",data.w1,data.w2,err_sum);
-    //printf("w1:%lf w2:%lf err_sum: %lf\n",w1,w2,err_sum);
-    fprintf(fp2,"%.1lf\n",err_sum);
-    err_sum=0;    
+    fprintf(fp2,"%.1lf\n",err_sum);//9.perceptron 함수로 줄 4개를 확인한 다음 나온 err합을 err 파일에 입력
+    err_sum=0;    //10.err를 초기화
 	}
-	fclose(fp);
+	fclose(fp);//11.파일 닫기
     fclose(fp2);
     }
+
+	
 
 	
