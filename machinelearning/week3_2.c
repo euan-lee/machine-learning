@@ -37,7 +37,7 @@ void input_w1_w2_on_text_and_file_open(){
      fclose(fp);
 }
 
-void Input_w1_w1_tetha(){
+void Input_tetha(){
         printf(" tetha");
         scanf("%lf",&tetha);
         printf("setha is %lf \n",tetha);
@@ -89,15 +89,24 @@ void Perceptron(int x1,int x2,double w1,double w2,int target){
 	}
 }
 
-
+void Choose_or_and(){
+    int choice=4;
+    printf("press 1 :or press2 :and\n");
+    scanf("%d",&choice);
+    if(choice==1){
+        printf("or\n");
+        Or();
+    }
+    else if(choice==2){
+        printf("and\n");
+        And();
+    }
+}
 
 int main(){
-
+    Choose_or_and();
     input_w1_w2_on_text_and_file_open();//ok
-	Input_w1_w1_tetha();//ok
-	//And();//ok
-	Or();//ok
-
+	Input_tetha();//ok
     FILE *fp = fopen("w1w2.txt", "r");//ok
     FILE *fp2 = fopen("err.txt", "w");//ok
     struct data data;//ok
