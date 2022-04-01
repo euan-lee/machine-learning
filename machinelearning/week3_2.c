@@ -72,20 +72,20 @@ void Perceptron(int x1,int x2,double w1,double w2,int target){//play the percept
 
 	if(sum>=tetha){
     	y_cal=1;
-    }
-    else{
-        y_cal=0;
-    }  
+    	}
+        else{
+            y_cal=0;
+        }  
 	
 	if(y_cal==target){
-        printf("x1,x2 w1,w2,setha is%d %d %f %lf %lf\n",x1,x2,w1,w2,tetha);
+        	printf("x1,x2 w1,w2,setha is%d %d %f %lf %lf\n",x1,x2,w1,w2,tetha);
 		printf("correct\n");
 	}
 	else{
 		printf("x1,x2 w1,w2,setha is%d %d %lf %lf %lf\n",x1,x2,w1,w2,tetha);
 		err_sum=err_sum+(0.5)*(target-y_cal)*(target-y_cal);
 		printf("err_desu %lf\n",err_sum);
-        printf("error\n");
+        	printf("error\n");
 	}
 }
 
@@ -108,20 +108,24 @@ int main(){
 
     Choose_or_and();//1.and or 중 선택
     input_w1_w2_on_text_and_file_open();//2.w1-w2를 -10부터 10까지 입력
-	Input_tetha();//3.세타 입력
+    Input_tetha();//3.세타 입력
     FILE *fp = fopen("w1w2.txt", "r");//4.w1w2 읽기모드로 열기
     FILE *fp2 = fopen("err.txt", "w");//5.err 읽기모드로 열기
     struct data data;//ok
     while(!((fscanf(fp, "%lf %lf",&data.w1,&data.w2))==EOF)){//6.w1w2데이터 한줄씩 읽기
 
         printf("w1,w2 is new %lf %lf\n",data.w1,data.w2);//7.w1,w2데이터 확인
-        for(int i=0;i<4;i++){//8.for문을 돌면서 4개의 줄확인 //00 01 10 11//
-            Perceptron(x1[i],x2[i],data.w1,data.w2,target[i]);
+        
+	    for(int i=0;i<4;i++){//8.for문을 돌면서 4개의 줄확인 //00 01 10 11//
+             
+            Perceptron(x1[i],x2[i],data.w1,data.w2,target[i]);//줄마다 perceptorn 연산 연산후 각줄의 에러 더하기
+		    
         }
+	    
     fprintf(fp2,"%.1lf\n",err_sum);//9.perceptron 함수로 줄 4개를 확인한 다음 나온 err합을 err 파일에 입력
     err_sum=0;    //10.err를 초기화
-	}
-	fclose(fp);//11.파일 닫기
+    }
+    fclose(fp);//11.파일 닫기
     fclose(fp2);
     }
 
