@@ -5,8 +5,6 @@
 int x1[4]={0,0,1,1};
 int x2[4]={0,1,0,1};
 int target[4]={0};
-double w1=2.0;
-double w2=0.0;
 double tetha=0.0;
 int line_check[4]={0,};
 double err_sum=0;
