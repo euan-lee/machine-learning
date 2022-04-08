@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h> 
-#define etha 0.5
+#define etha 0.05
 
 int x1[4]={0,0,1,1};
 int x2[4]={0,1,0,1};
@@ -49,19 +49,10 @@ void Or(){
 	
 void Perceptron(int line){
 
-	sum=x1[line]*w1+x2[line]*w2;
-
-	if(sum>=tetha){
-    	cal_y[line]=1;
-    }
-    else{
-        cal_y[line]=0;
-    }  
-	
+	cal_y[line]=x1[line]*w1+x2[line]*w2-tetha;
+	printf("cal _y is %d\n",cal_y[line]);
 	if(cal_y[line]==target[line]){
 		line_check[line]=1;
-		printf("line %d correct\n",line);
-		printf("w1,w2,setha is %f %f %f\n",w1,w2,tetha);
 	}
 	else{
 		printf("w1,w2,setha is %f %f %f\n",w1,w2,tetha);
@@ -82,8 +73,8 @@ void Check(){
 int main(){
 
 	Input_w1_w1_tetha();
-	//And();
-	Or();	
+	And();
+	//Or();	
 
 	FILE *w1_desu = fopen("w1.txt", "w");    
 	FILE *w2_desu = fopen("w2.txt", "w");  
@@ -91,7 +82,7 @@ int main(){
 
 	while(1){
 	
-	if(cnt==5){//100회 반복시!!
+	if(cnt==100){//100회 반복시!!
 		fclose(w1_desu);
 		fclose(w2_desu); 
 		fclose(err_desu);  
@@ -111,8 +102,8 @@ int main(){
 	printf("why w1 is %lf\n",w1);
 	printf("why w2 is %lf\n",w2);
 	printf("err_desu %lf\n",err_sum); 
-	fprintf(w1_desu,"%lf\n",w1);
-    fprintf(w2_desu,"%lf\n",w2);
+	fprintf(w1_desu,"%lf %lf\n",w1,w2);
+   // fprintf(w2_desu,"%lf\n",w2);
 	fprintf(err_desu,"%lf\n",err_sum);  
 	cnt++;
 	err_sum=0.0;
