@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <math.h>
-#define eta 0.4
-#define epoch 50
-#define neuron_num 2
 
 double delta[3] = {0,0,0};
 double w1_input_val[3]={-0.5,-0.4,-0.3};//w1_input_val[i]과  w2_input_val[i]은 
 double w2_input_val[3]={-0.5,-0.4,-0.3 };//한개의 neuron의 가중치이다.
 double w_output_val[3]={-0.5,-0.4,-0.3};
 double u[3]={0,0,0};
+int neuron_num=2;
+double eta=0.4;
 
 void FeedForward(double x1,double x2,double target){
 	double s_total=0;
