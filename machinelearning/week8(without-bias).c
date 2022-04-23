@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#define eta 0.9
+#define eta 0.4
 
 int neuron_num=0;
 int epoch=0;
