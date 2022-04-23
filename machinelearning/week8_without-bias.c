@@ -45,7 +45,7 @@ void Error_back_propagation(double x1,double x2,double target){
 int main() {
 
 	Error_back_propagation(1.0,1.0 ,1.0);
-    
+    printf("---------------------\n");
 	for(int i = 0; i <neuron_num; i++){
 		printf("W%d->%d:%lf\n",1,i+3,w1_input_val[i]);
 		printf("W%d->%d:%lf\n",2,i+3,w2_input_val[i]);;
@@ -54,4 +54,5 @@ int main() {
     for (int i = 0; i <neuron_num; i++) {
 		printf("W%d->%d:%lf\n",i+3,neuron_num+ 3,w_output_val[i]);
 	}
+	 printf("---------------------\n");
 }
