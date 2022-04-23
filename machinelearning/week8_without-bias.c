@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <math.h>
 #define eta 0.4
-#define epoch 60
+#define epoch 50
 #define neuron_num 2
 
-double delta[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-double w1_input_val[10] = {-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4 };//w1_input_val[i]과  w2_input_val[i]은 
-double w2_input_val[10] = {-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4 };//한개의 neuron의 가중치이다.
-double w_output_val[10] = {-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4 };
-double u[11] = {0,0,0,0,0,0,0,0,0,0,0};
+double delta[3] = {0,0,0};
+double w1_input_val[3]={-0.5,-0.4,-0.3};//w1_input_val[i]과  w2_input_val[i]은 
+double w2_input_val[3]={-0.5,-0.4,-0.3 };//한개의 neuron의 가중치이다.
+double w_output_val[3]={-0.5,-0.4,-0.3};
+double u[3]={0,0,0};
 
 void FeedForward(double x1,double x2,double target){
 	double s_total=0;
@@ -34,7 +34,7 @@ void FeedBackword(double x1,double x2,double target){
 		w_output_val[i]=w_output_val[i]+eta*delta[neuron_num]*u[i];
 		w1_input_val[i]=w1_input_val[i]+eta*delta[i]*x1;
 		w2_input_val[i]=w2_input_val[i]+eta*delta[i]*x2;
-	}
+    }
 
 }
 
@@ -45,7 +45,14 @@ void Error_back_propagation(double x1,double x2,double target){
 
 int main() {
 
-	for(int i=0;i<epoch;i++){
-		Error_back_propagation(1.0,1.0 ,1.0);
+	Error_back_propagation(1.0,1.0 ,1.0);
+    
+	for(int i = 0; i <neuron_num; i++){
+		printf("W%d->%d:%lf\n",1,i+3,w1_input_val[i]);
+		printf("W%d->%d:%lf\n",2,i+3,w2_input_val[i]);;
+	}
+
+    for (int i = 0; i <neuron_num; i++) {
+		printf("W%d->%d:%lf\n",i+3,neuron_num+ 3,w_output_val[i]);
 	}
 }
