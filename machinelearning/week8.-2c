@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <math.h>
+#define eta 0.4
+
+int neuron_num=2;
+int epoch=100;
+int error=0;
+double sum=0;
+
+double first_weight[2][10]={
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },//x1(0)->neuron
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 }//x2(1)->neuron
+};
+
+double second_weight[10][10]={
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4},
+    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4}
+    };    
+
+double input__layer_bias_weight[10]={-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4};
+
+double first__layer_bias_weight=0.5;
+
+double U[2][10] = {{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0}};
+
+int bias_mode=0;
+
+double delta[2][10]={{0,},{0,}};//[layer][neuron_number]
+
+void ChooseMode(){
+    printf("choose mode 1:with bias 2:without bias\n");
+    scanf("%d",&bias_mode);
+    if(bias_mode==1){
+        printf("with bias\n");
+    }else{
+        printf("without bias\n");
+    }
+       
+}
+
+void ChooseNeuron(){
+    printf("choose the number of neuron\n");
+    scanf("%d",&neuron_num);
+    printf("neuron_num:%d\n",neuron_num);
+}
+
+double Sigmoid(double sum){
+    double result=0;
+    result=1/(1 + exp(-sum));
+      return result;
+}
+
+void FeedForward(double x1,double x2){
+      //1st hidden layer 순회
+        printf("with bias mode\n");
+        for(int i=0;i<neuron_num;i++){
+            printf("------first layer u[0][%d]------\n",i);
+            printf("first_weight[0][%d]:%lf\n",i, first_weight[0][i]);   
+            printf("first_weight[1][%d]%lf\n",i, first_weight[1][i]);  
+            printf("input__layer_bias_weight[%d]%lf\n",i,input__layer_bias_weight[i]);  
+            sum=x1*+first_weight[0][i]+x2*first_weight[1][i];  
+            if(bias_mode==1){
+                sum=sum+1*input__layer_bias_weight[i];
+            }
+            printf("sum:%lf\n",sum);
+            U[0][i]=Sigmoid(sum);
+            printf("u[0][%d] is %lf\n",i,U[0][i]);
+        }
+            //last layer
+        sum=0;
+        for(int j=0;j<neuron_num;j++){
+            printf("------result  u[1][0]------\n");
+            printf("U[0][%d]:%lf\n",j,U[0][j]);
+            printf("second_weight[%d][0]%lf\n",j,second_weight[j][0]);
+            printf("U[0][%d]*second_weight[%d][0]:%lf\n",j,j,U[0][j]*second_weight[j][0]);
+            sum=sum+U[0][j]*second_weight[j][0];
+        }
+        if(bias_mode==1){
+            sum=sum+1*first__layer_bias_weight;
+        }
+            printf("sum:%lf\n",sum);
+            U[1][0]=Sigmoid(sum);
+            printf("result:U[1][0]:%lf\n",U[1][0]);
+            printf("-----feedforward end!-------------\n");
+    }
+  
+void FeedBackward(double x1,double x2,double target){
+    printf("x1:%lfx2:%lftarget:%lf\n",x1,x2,target);
+    //last delta
+    for(int i=0;i<neuron_num;i++){
+        delta[1][i]=(target-U[1][i])*U[1][i]*(1-U[1][i]);
+    }
+    
+}
+  
+
+
+void Error_back_propagation(double x1, double x2, double target) {
+    FeedForward(x1,x2);
+    FeedBackward(x1,x2,target);
+}
+
+
+int main(){
+   
+    ChooseMode();
+    ChooseNeuron();
+   
+    Error_back_propagation(1.0,1.0,0.0);
+    
+    //3.epoch값 만큼 반복-ok
+    for(int i=0;i<epoch;i++){  
+    //3-1.epoch:1회당 ->ok
+    
+    //error=0; 선언->ok
+    error=0;
+    
+    //3-1-1.파일에 쓰여진 데이터 한줄을 읽는다(x1,x2,target)
+    
+    //3-1-2.쓰여진 데이터 ebp알고리즘에 대입
+     //Error_back_propagation(1.0,-0.6,0.0);
+    //4.error=abs(target-u[final]);
+
+    //epoch 1회 반복 끝
+
+    //error와 epoch값을 txt file에 쓴다.(주의 사항!!:error>0.5이면 1아니면 0으로 설정한다.)(변수 설정을 위에다가 해야할 듯??!!)
+
+    //다시 3으로 이동(epoch++);
+    }   
+
+}
