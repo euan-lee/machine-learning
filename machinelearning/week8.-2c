@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 #define eta 0.4
+#define epoch 1
 
 int neuron_num=0;
-int epoch=100;
-int error=0;
 double sum=0;
 
 double first_weight[2][10]={
@@ -49,7 +48,7 @@ double Sigmoid(double sum){
 
 void FeedForward(double x1,double x2,double target){
       //1st hidden layer 순회
-        printf("with bias mode\n");
+
         for(int i=0;i<neuron_num;i++){
             printf("------first layer u[0][%d]------\n",i);
             printf("first_weight[0][%d]:%lf\n",i, first_weight[0][i]);   
@@ -78,7 +77,6 @@ void FeedForward(double x1,double x2,double target){
             printf("sum:%lf\n",sum);
             U[1][0]=Sigmoid(sum);
             printf("result:U[1][0]:%lf\n",U[1][0]);
-            error=error+(U[1][0]-target);
             printf("-----feedforward end!-------------\n");
     }
   
@@ -122,30 +120,40 @@ void FeedBackward(double x1,double x2,double target){
   
 
 
-double Error_back_propagation(double x1, double x2, double target,double error) {
+double Error_back_propagation(double x1, double x2, double target) {
     FeedForward(x1,x2,target);
     FeedBackward(x1,x2,target);
-    error=abs(target-U[1][0]);
-    return error;
 }
 
 
 int main(){
-   
+   double x1,x2,target=0;
+   double error=0;
     ChooseMode();
     ChooseNeuron();
-    
+    FILE *fp = fopen("test.txt","r");    // hello.txt 파일을 읽기 모드로 열기.  
+    if(fp == NULL){
+        printf("file open failed\n");
+    }
+    FILE *fp2 = fopen("result.txt","w"); 
     //3.epoch값 만큼 반복-ok
     for(int i=0;i<epoch;i++){  
     error=0;
-    while(1){
-    error=error+Error_back_propagation(1.0,1.0,0.0,0);
+    while(!((fscanf(fp, "%lf %lf %lf \n",&x1,&x2,&target))==EOF)){
+        printf("x1:%lf\n",x1);
+        printf("x2:%lf\n",x2);
+        printf("taret:%lf\n",target);
+        Error_back_propagation(x1,x2,target);
+        error=error+fabs(target-U[1][0]);
+        
     }
-    //epoch 1회 반복 끝
-
+    printf("error %lf\n",error);
+    printf("epoch:%d\n",i);
     //error와 epoch값을 txt file에 쓴다.(주의 사항!!:error>0.5이면 1아니면 0으로 설정한다.)(변수 설정을 위에다가 해야할 듯??!!)
 
+    fprintf(fp2, "%d %lf\n",i,error);
     //다시 3으로 이동(epoch++);
     }   
-
+    fclose(fp);   
+    fclose(fp2);   
 }
