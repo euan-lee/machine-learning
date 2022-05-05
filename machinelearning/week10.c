@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#define eta 10
+#define eta 1
 #define epoch 300
 #define show 0
 
@@ -60,7 +60,7 @@ void FeedForward(double x1,double x2,double target){
                 printf("input__layer_bias_weight[%d]%lf\n",i,input__layer_bias_weight[i]);  
             }
             
-            sum=x1*+first_weight[0][i]+x2*first_weight[1][i];  
+            sum=x1*first_weight[0][i]+x2*first_weight[1][i];  
             
             if(bias_mode==1){
                 sum=sum+1*input__layer_bias_weight[i];
@@ -181,7 +181,7 @@ void GridTest(double x1,double x2){
                 printf("first_weight[1][%d]%lf\n",i, first_weight[1][i]);  
                 printf("input__layer_bias_weight[%d]%lf\n",i,input__layer_bias_weight[i]);  
             }
-            sum=x1*+first_weight[0][i]+x2*first_weight[1][i];  
+            sum=x1*first_weight[0][i]+x2*first_weight[1][i];  
             
             if(bias_mode==1){
                 sum=sum+1*input__layer_bias_weight[i];
