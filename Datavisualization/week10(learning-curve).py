@@ -5,10 +5,9 @@ import numpy as np
 f = open("result.txt",'r')
 x1=[]
 x2=[]
-y=[]
 
-plt.xlabel('X1-Axis')
-plt.ylabel('X2-Axis')
+plt.xlabel('epoch-Axis')
+plt.ylabel('error-Axis')
 plt.grid(True)
 
 while True:
