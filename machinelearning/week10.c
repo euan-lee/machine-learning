@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #define eta 0.5
-#define epoch 200
+#define epoch 1000
 #define show 0
 
 int neuron_num=0;
@@ -234,16 +234,6 @@ void GridTest(double x1,double x2){
             */
 }
 
-void WriteGrid(){
-       printf("grid-data created\n");
-    FILE *gird_C= fopen("grid.txt","w"); 
-       for(double i=-3.0;i<3.0;i=i+0.1){ 
-            for(double j=-3.0;j<3.0;j=j+0.1){
-                    fprintf(gird_C,"%.1lf %.1lf\n",i,j);
-            }
-        }
-    fclose(gird_C);
-}
 
 int main(){
     double x1,x2,target=0;
