@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-f = open("gird.txt",'r')
+f = open("haha.txt",'r')
 x1=[]
 x2=[]
 y=[]
 
 plt.xlabel('X1-Axis')
-plt.ylabel('X2-Axis')
+plt.ylabel('X2-Axis') 
 plt.grid(True)
 
 while True:
