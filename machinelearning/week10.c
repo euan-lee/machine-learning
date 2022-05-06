@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
-#define eta 1
-#define epoch 300
+#define eta 0.5
+#define epoch 200
 #define show 0
 
 int neuron_num=0;
@@ -9,7 +9,7 @@ int neuron_num=0;
 double sum=0;
 
 double first_weight[2][10]={
-    {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 },//x1(0)->neuron
+    {-0.5, -0.3, -0.2, -0.21, -0.14, 0.01, 0.17, 0.24, -0.31, -0.4 },//x1(0)->neuron
     {-0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4 }//x2(1)->neuron
 };
 
@@ -116,11 +116,11 @@ void FeedBackward(double x1,double x2,double target){
         printf("updated delta[1][0]:%lf\n",delta[1][0]);
     }
 
-    //1-layer
+    //1-layer -ok
     for(int j=0;j<neuron_num;j++){
     
         delta[0][j]=U[0][j]*(1-U[0][j])*second_weight[j][0]*delta[1][0];
-    
+       
         if(show==1){
             printf("updated delta[0][%d]:%lf\n",j,delta[0][j]);
         }
@@ -130,7 +130,7 @@ void FeedBackward(double x1,double x2,double target){
     for(int i=0;i<neuron_num;i++){
            // printf("delta weight[%d][0] %lf\n",i,eta*delta[1][0]*U[0][i]);
             second_weight[i][0]= second_weight[i][0]+eta*delta[1][0]*U[0][i];
-    
+        
             if(show==1){
                 printf("updated second_weight[%d][0]:%lf\n",i,second_weight[i][0]);
             }
@@ -146,6 +146,7 @@ void FeedBackward(double x1,double x2,double target){
     for(int i=0;i<neuron_num;i++){
         first_weight[0][i]=first_weight[0][i]+eta*delta[0][i]*x1;
         first_weight[1][i]=first_weight[1][i]+eta*delta[0][i]*x2;
+    
         if(show==1){
             printf(" first_weight[0][%d]:%lf\n",i,first_weight[0][i]);
             printf(" first_weight[1][%d]:%lf\n",i,first_weight[1][i]);
@@ -222,7 +223,7 @@ void GridTest(double x1,double x2){
             printf("result:U[1][0]:%lf\n",U[1][0]);
             printf("-----gridtest end!-------------\n");
         } 
-             printf("result:U[1][0]:%lf\n",U[1][0]);
+          /*  printf("result:U[1][0]:%lf\n",U[1][0]);
             printf("-----gridtest end!-------------\n");
             if(U[1][0]>0.5){
                 printf("correct\n");
@@ -230,8 +231,19 @@ void GridTest(double x1,double x2){
             else{
                 printf("wrong\n");
             }
+            */
 }
 
+void WriteGrid(){
+       printf("grid-data created\n");
+    FILE *gird_C= fopen("grid.txt","w"); 
+       for(double i=-3.0;i<3.0;i=i+0.1){ 
+            for(double j=-3.0;j<3.0;j=j+0.1){
+                    fprintf(gird_C,"%.1lf %.1lf\n",i,j);
+            }
+        }
+    fclose(gird_C);
+}
 
 int main(){
     double x1,x2,target=0;
@@ -239,9 +251,8 @@ int main(){
     ChooseMode();
     ChooseNeuron();
 
+
     FILE *fp2 = fopen("result.txt","w"); 
-
-
     for(int i=0;i<epoch;i++){  
         FILE *fp = fopen("data.txt","r");    // hello.txt 파일을 읽기 모드로 열기.  
         error=0;
@@ -257,20 +268,30 @@ int main(){
         fclose(fp);   
         fprintf(fp2, "%d %lf\n",i,error);
     }   
-    fclose(fp2);   
-    FILE *grid = fopen("gird.txt","w"); 
-    FILE *fp = fopen("data.txt","r");    // hello.txt 파일을 읽기 모드로 열기.  
-    while(!((fscanf(fp, "%lf %lf %lf \n",&x1,&x2,&target))==EOF)){
-        GridTest(x1,x2);
-        if(U[1][0]>0.5){
-             fprintf(grid, "%lf %lf %d\n",x1,x2,1);
-        }else{
-             fprintf(grid, "%lf %lf %d\n",x1,x2,0);
+    fclose(fp2); 
+
+
+
+
+    printf("grid-data created\n");
+     FILE *fp3= fopen("haha.txt","w");  
+        if(fp3 == NULL){
+            printf("haha file open failed\n");
         }
-    }
-   /*
-   Error_back_propagation(1,1,0);
-   */
-    fclose(fp);
-    fclose(grid);    
+
+       for(double i=-2.0;i<3.0;i=i+0.1){ 
+        for(double j=-2.0;j<3.0;j=j+0.1){
+            GridTest(i,j);
+            if(U[1][0]>0.5){
+               // printf("x1:%lf x2:%lf,1\n",i,j);           
+                fprintf(fp3,"%lf %lf %d\n",i,j,1);
+            }
+            else{
+               // printf("x1:%lf x2:%lf,0\n",i,j);  
+                fprintf(fp3,"%lf %lf %d\n",i,j,0);
+            }
+        }
+        }   
+    fclose(fp3);
+ 
 }
