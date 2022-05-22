@@ -60,8 +60,7 @@ void Show_weight(){
 			printf("W%d%d : %lf\n",fisrt_layer_num + 3 + i, j + 3,hidden_weight[i][j]);
 		}
 	}
-
-	//위의 중간 layer 로 들어오는 w 값을 출력한 이후에 output 쪽에 연결된 w 값을 출력한다.
+	
 	for (int i = 0; i < second_layer_num; i++) {
 		printf("W%d,%d : %lf\n", fisrt_layer_num + second_layer_num + 3,fisrt_layer_num + 3 + i,  last_weight[i]);
 	}
@@ -195,8 +194,7 @@ void memoize_weight(){
 			hidden_weight_temp[i][j]=hidden_weight[i][j];
 		}
 	}
-
-	//위의 중간 layer 로 들어오는 w 값을 출력한 이후에 output 쪽에 연결된 w 값을 출력한다.
+	
 	for (int i = 0; i < second_layer_num; i++) {
 		last_weight_temp[i]=last_weight[i];
 	}
@@ -216,7 +214,6 @@ void Show_temp_weight(){
 		}
 	}
 
-	//위의 중간 layer 로 들어오는 w 값을 출력한 이후에 output 쪽에 연결된 w 값을 출력한다.
 	for (int i = 0; i < second_layer_num; i++) {
 		printf("W_temp%d,%d : %lf\n", fisrt_layer_num + second_layer_num + 3,fisrt_layer_num + 3 + i,  last_weight_temp[i]);
 	}
