@@ -43,6 +43,9 @@ after function fitting
 
 
 
+error-epoch graph
+
+![image](https://user-images.githubusercontent.com/62791913/170620536-8aedba06-aecc-4f7c-8bbd-05778591b956.png)
 
 
 
