@@ -1,22 +1,22 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#define epoch 1
+#include <stdlib.h> 
 
+int stride=100;
+int epoch=1000;
 int hidden=0;
 int output_count=0;
 int bias = 1;
-double eta = 0.025;
+double eta = 0.9;
 
 int hidden_N[10] = {0,0,0,0,0,0,0,0,0,0};
 
-double w[10][15] = { {0,}, };
+double w_first[10][15] = { {0,}, };
 double w_middle[10][15][15] = { { {0,},} , };
 double w_last[2][15] = { { 0,} , };
 double w_bias[10][15] = { {0,}, };
 double w_bias_output[2] = { 0, };
-
-
 
 int n = 0;
 
@@ -34,14 +34,13 @@ void Input_num(){
      printf("input x number is %d\n",n);
 }
 
-
-void Error_Back_Propagation(double x[], double t[]) {
-	double S = 0;
+void FeedForward(double x[], double t[]){
+    double S = 0;
 
 	for (int i = 0; i < hidden_N[0]; i++) {
 		S = 0;
 		for (int j = 0; j < n; j++) {
-			S += x[j] * w[j][i];
+			S += x[j] * w_first[j][i];
 		}
 		if (bias == 1) S += w_bias[0][i];
 
@@ -69,8 +68,9 @@ void Error_Back_Propagation(double x[], double t[]) {
 
 		U_last[i] = 1 / (1 + exp(-S));
 	}
+}
 
-
+void FeedBackward(double x[], double t[]){
 	for (int i = 0; i < output_count; i++) {
 		last_delta[i] = (t[i] - U_last[i]) * U_last[i] * (1 - U_last[i]);
 	}
@@ -98,7 +98,7 @@ void Error_Back_Propagation(double x[], double t[]) {
 	
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < hidden_N[0]; j++) {
-			w[i][j] += eta * delta[0][j] * x[i];
+			w_first[i][j] += eta * delta[0][j] * x[i];
 		}
 	}
 
@@ -123,6 +123,11 @@ void Error_Back_Propagation(double x[], double t[]) {
 	}
 }
 
+void Error_Back_Propagation(double x[], double t[]) {
+    FeedForward(x,t);
+    FeedBackward(x,t);
+}
+
 int GridTest(double x[], double t[]) {
 	double S = 0;
 	double U_tmp[10][15] = { {0,}, {0,} };
@@ -132,7 +137,7 @@ int GridTest(double x[], double t[]) {
 	for (int i = 0; i < hidden_N[0]; i++) {
 		S = 0;
 		for (int j = 0; j < n; j++) {
-			S += x[j] * w[j][i];
+			S += x[j] * w_first[j][i];
 		}
 		if (bias == 1) S += w_bias[0][i];
 
@@ -165,41 +170,56 @@ int GridTest(double x[], double t[]) {
 }
 
 
-void set_w(int write) {
+double randomDouble(void) {
+  return (double)(rand()%20)/10-1.0;
+}
+
+
+void weight_rand_setting(){
 	srand(1);
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < hidden_N[0]; j++) {
-			writeChoose(write, &w[i][j]);
+		w_first[i][j]=randomDouble();
+        printf("w[%d][%d]:%lf\n",i,j,w_first[i][j]);
 		}
 	}
 
 	for (int i = 0; i < hidden - 1; i++) {
 		for (int j = 0; j < hidden_N[i]; j++) {
 			for (int k = 0; k < hidden_N[i + 1]; k++) {
-				writeChoose(write, &w_middle[i][j][k]);
+				w_middle[i][j][k]=randomDouble();
+                printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
 			}
 		}
 	}
 
 	for (int i = 0; i < output_count; i++) {
 		for (int j = 0; j < hidden_N[hidden - 1]; j++) {
-			writeChoose(write, &w_last[i][j]);
+			w_last[i][j]=randomDouble();
+            printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
 		}
 	}
 
 	for (int i = 0; i < hidden; i++) {
 		for (int j = 0; j < hidden_N[i]; j++) {
-			writeChoose(write, &w_bias[i][j]);
+			w_bias[i][j]=randomDouble();
 		}
 	}
 
 	for (int i = 0; i < output_count; i++) {
-		writeChoose(write, &w_bias_output[i]);
+		w_bias_output[i]=randomDouble();
 	}
 }
 
 
+
+
+
 int main() {
+    time_t orgtime; // 시간을 담을 자료형 변수 선언 
+	struct tm* pTimeData; // tm구조체 포인터 생성
+	orgtime = time(NULL); // 1970년 1월 1일 0시 00분 (UTC)을 저장
+	pTimeData = localtime(&orgtime); // 저장한 시간을 구조체에 저장
     double x[10]={0,},t[2]={0};
     int variable=0;
     int cnt=0;
@@ -234,7 +254,38 @@ int main() {
     fclose(architecture);
     
     //--------------architecture read end
-    
+    //parameter.dat read
+    double pram_val=0;
+    int cnt_val=0;
+    FILE* parameter= fopen("parameter.dat", "r");
+    if(NULL !=parameter)
+    {
+        printf("parameter.dat opened\n");
+    }
+    else
+    {
+        printf(" parameter.dat open failed\n");
+    }
+    //parameter.dat 읽고 파일 수정
+    while (fscanf(parameter,"%lf\n",&pram_val)!= EOF) {
+    printf("pram_val:%lf\n",pram_val);
+    if(cnt_val==0){
+        eta=pram_val;
+    }
+    if(cnt_val==1){
+        stride=pram_val;   
+    }
+    if(cnt_val==2){
+        epoch=pram_val;
+    }
+    cnt_val++;
+    }
+    fclose(parameter);
+    printf("eta:%lf\n",eta);
+    printf("stride:%d\n",stride);
+    printf("epoch:%d\n",epoch);
+    //parameter.dat read end
+   
     //총 인풋 개수 구하기 시작(인풋 데이터 몇줄인지)//x1,,x2,x3..데이터 수정할것 이로직에서 데이터 줄 뽑아야함
     int input_total_cnt=0;//총 인풋 데이터 개수
 
@@ -256,6 +307,7 @@ int main() {
     input= fopen("input.txt","r");
     FILE* validationdata=fopen("validationdata.txt","w");
     FILE* trainingdata=fopen("trainingdata.txt","w");
+    
     while (fscanf(input,"%lf %lf %lf\n",&x[0],&x[1],&t[0])!=EOF){
         if((extract_num<input_total_cnt/10)&&(cnt_2%10==0)){
            // printf("x[0]:%lf,x[1]:%lf,t[0]:%lf\n",x[0],x[1],t[0]);
@@ -274,26 +326,56 @@ int main() {
     fclose(input);
     fclose(validationdata);
     fclose(trainingdata);
-    //weight setting
 
+//--------------여기까지 수정 안해도 됨--------------------
 
+//weight setting
+weight_rand_setting();
 
-
-
+//-------------데이터 읽는 부분 파일 보고 수정-------------
     //추출 데이터 ebp로 training
-    double err = 0;
+    FILE* learningcurve=fopen("learningcurve.txt","w");  
+    double err=0;
     trainingdata=fopen("trainingdata.txt","r");
     for(int i=0;i<epoch;i++){
-        err = 0;
+        rewind(trainingdata);
+        err=0;
         while (fscanf(trainingdata,"%lf %lf %lf\n",&x[0],&x[1],&t[0])!=EOF){
-                    printf("x[0]:%lf,x[1]:%lf,t[0]:%lf\n",x[0],x[1],t[0]);
+                    //printf("x[0]:%lf,x[1]:%lf,t[0]:%lf\n",x[0],x[1],t[0]);
                     Error_Back_Propagation(x,t);
                     for (int i = 0; i < output_count; i++) {
                     err += fabs(t[i] - U_last[i]);
                     }
             }
+    //learning curve에 저장 
+    if(i%stride==0){
+        orgtime= time(NULL);
+		pTimeData=localtime(&orgtime);
+        printf("mm:%d dd:%d hh:%d min:%d secc:%d\n", pTimeData->tm_mon+1,pTimeData->tm_mday, pTimeData->tm_hour,pTimeData->tm_min,pTimeData->tm_sec);
+        printf(" epoch:%d err:%lf\n",i,err);
+        
+        printf("weight store!!\n");
+
+   // weight_name="weight";
+    //printf("%s\n", weight_name);  
+    }
+   /*
+    double err_val=0;
+    if(i%stride==0){
+        validationdata=fopen("validationdata.txt","r");  
+        err_val=0;
+        while (fscanf(validationdata,"%lf %lf %lf\n",&x[0],&x[1],&t[0])!=EOF){
+        Error_Back_Propagation(x,t);
+        for (int i = 0; i < output_count; i++) {
+            err_val+= fabs(t[i] - U_last[i]);
+        }
+    }
+    printf("epoch:%d err_val:%lf\n",i,err_val);
+    }
+    */
     }
     fclose(trainingdata); 
+    fclose(learningcurve); 
     //training시 특정 epoch마다 error,time이 적힌 error.dat을 작성
 
 
