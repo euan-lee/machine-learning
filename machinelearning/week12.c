@@ -10,7 +10,7 @@ int output_count=0;
 int bias = 1;
 double eta = 0.9;
 
-int hidden_N[10] = {0,0,0,0,0,0,0,0,0,0};
+int hidden_N_num[10] = {0,0,0,0,0,0,0,0,0,0};
 
 double w_first[10][15] = { {0,}, };
 double w_middle[10][15][15] = { { {0,},} , };
@@ -37,7 +37,7 @@ void Input_num(){
 void FeedForward(double x[], double t[]){
     double S = 0;
 
-	for (int i = 0; i < hidden_N[0]; i++) {
+	for (int i = 0; i < hidden_N_num[0]; i++) {
 		S = 0;
 		for (int j = 0; j < n; j++) {
 			S += x[j] * w_first[j][i];
@@ -48,9 +48,9 @@ void FeedForward(double x[], double t[]){
 	}
 
 	for (int i = 0; i < hidden - 1; i++) {
-		for (int j = 0; j < hidden_N[i + 1]; j++) {
+		for (int j = 0; j < hidden_N_num[i + 1]; j++) {
 			S = 0;
-			for (int k = 0; k < hidden_N[i]; k++) {
+			for (int k = 0; k < hidden_N_num[i]; k++) {
 				S += U[i][k] * w_middle[i][k][j];
 			}
 			if (bias == 1) S += w_bias[i + 1][j];
@@ -61,7 +61,7 @@ void FeedForward(double x[], double t[]){
 
 	for (int i = 0; i < output_count; i++) {
 		S = 0;
-		for (int j = 0; j < hidden_N[hidden - 1]; j++) {
+		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
 			S += U[hidden - 1][j] * w_last[i][j];
 		}
 		if (bias == 1) S += w_bias_output[i];
@@ -76,7 +76,7 @@ void FeedBackward(double x[], double t[]){
 	}
 
 
-	for (int i = 0; i < hidden_N[hidden - 1]; i++) {
+	for (int i = 0; i < hidden_N_num[hidden - 1]; i++) {
 		double allDelta = 0;
 		for (int j = 0; j < output_count; j++) {
 			allDelta += last_delta[j] * w_last[j][i];
@@ -86,9 +86,9 @@ void FeedBackward(double x[], double t[]){
 
 
 	for (int i = hidden - 1; i > 0; i--) {
-		for (int j = 0; j < hidden_N[i - 1]; j++) {
+		for (int j = 0; j < hidden_N_num[i - 1]; j++) {
 			double allDelta = 0;
-			for (int k = 0; k < hidden_N[i]; k++) {
+			for (int k = 0; k < hidden_N_num[i]; k++) {
 				allDelta += delta[i][k] * w_middle[i - 1][j][k];
 			}
 			delta[i - 1][j] = U[i - 1][j] * (1 - U[i - 1][j]) * allDelta;
@@ -97,26 +97,26 @@ void FeedBackward(double x[], double t[]){
 
 	
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < hidden_N[0]; j++) {
+		for (int j = 0; j < hidden_N_num[0]; j++) {
 			w_first[i][j] += eta * delta[0][j] * x[i];
 		}
 	}
 
 	for (int i = 0; i < hidden - 1; i++) {
-		for (int j = 0; j < hidden_N[i]; j++) {
-			for (int k = 0; k < hidden_N[i + 1]; k++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+			for (int k = 0; k < hidden_N_num[i + 1]; k++) {
 				w_middle[i][j][k] += eta * delta[i + 1][k] * U[i][j];
 			}
 			w_bias[i][j] += eta * delta[i][j];
 		}
 	}
 
-	for (int i = 0; i < hidden_N[hidden - 1]; i++) {
+	for (int i = 0; i < hidden_N_num[hidden - 1]; i++) {
 		w_bias[hidden - 1][i] += eta * delta[hidden - 1][i];
 	}
 
 	for (int i = 0; i < output_count; i++) {
-		for (int j = 0; j < hidden_N[hidden - 1]; j++) {
+		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
 			w_last[i][j] += eta * last_delta[i] * U[hidden - 1][j];
 		}
 		w_bias_output[i] += eta * last_delta[i];
@@ -128,65 +128,22 @@ void Error_Back_Propagation(double x[], double t[]) {
     FeedBackward(x,t);
 }
 
-int GridTest(double x[], double t[]) {
-	double S = 0;
-	double U_tmp[10][15] = { {0,}, {0,} };
-	double U_last_tmp[2] = { 0, };
-
-
-	for (int i = 0; i < hidden_N[0]; i++) {
-		S = 0;
-		for (int j = 0; j < n; j++) {
-			S += x[j] * w_first[j][i];
-		}
-		if (bias == 1) S += w_bias[0][i];
-
-		U_tmp[0][i] = 1 / (1 + exp(-S));
-	}
-
-
-	for (int i = 0; i < hidden - 1; i++) {
-		for (int j = 0; j < hidden_N[i + 1]; j++) {
-			S = 0;
-			for (int k = 0; k < hidden_N[i]; k++) {
-				S += U_tmp[i][k] * w_middle[i][k][j];
-			}
-			if (bias == 1) S += w_bias[i + 1][j];
-
-			U_tmp[i + 1][j] = 1 / (1 + exp(-S));
-		}
-	}
-
-
-	for (int i = 0; i < output_count; i++) {
-		S = 0;
-		for (int j = 0; j < hidden_N[hidden - 1]; j++) {
-			S += U_tmp[hidden - 1][j] * w_last[i][j];
-		}
-		if (bias == 1) S += w_bias_output[i];
-
-		U_last_tmp[i] = 1 / (1 + exp(-S));
-	}
-}
-
-
 double randomDouble(void) {
   return (double)(rand()%20)/10-1.0;
 }
 
-
 void weight_rand_setting(){
 	srand(1);
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < hidden_N[0]; j++) {
+		for (int j = 0; j < hidden_N_num[0]; j++) {
 		w_first[i][j]=randomDouble();
         printf("w[%d][%d]:%lf\n",i,j,w_first[i][j]);
 		}
 	}
 
 	for (int i = 0; i < hidden - 1; i++) {
-		for (int j = 0; j < hidden_N[i]; j++) {
-			for (int k = 0; k < hidden_N[i + 1]; k++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+			for (int k = 0; k < hidden_N_num[i + 1]; k++) {
 				w_middle[i][j][k]=randomDouble();
                 printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
 			}
@@ -194,14 +151,14 @@ void weight_rand_setting(){
 	}
 
 	for (int i = 0; i < output_count; i++) {
-		for (int j = 0; j < hidden_N[hidden - 1]; j++) {
+		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
 			w_last[i][j]=randomDouble();
             printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
 		}
 	}
 
 	for (int i = 0; i < hidden; i++) {
-		for (int j = 0; j < hidden_N[i]; j++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
 			w_bias[i][j]=randomDouble();
 		}
 	}
@@ -211,6 +168,39 @@ void weight_rand_setting(){
 	}
 }
 
+void  show_weight(){
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < hidden_N_num[0]; j++) {
+        printf("w[%d][%d]:%lf\n",i,j,w_first[i][j]);
+		}
+	}
+
+	for (int i = 0; i < hidden - 1; i++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+			for (int k = 0; k < hidden_N_num[i + 1]; k++) {
+                printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
+			}
+		}
+	}
+
+	for (int i = 0; i < output_count; i++) {
+		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
+            printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
+		}
+	}
+
+	for (int i = 0; i < hidden; i++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+			w_bias[i][j]=randomDouble();
+            printf("w_bias[%d][%d]:%lf\n",i,j,w_bias[i][j]);
+		}
+	}
+
+	for (int i = 0; i < output_count; i++) {
+		w_bias_output[i]=randomDouble();
+          printf("w_bias_output[%d]:%lf\n",i,w_bias_output[i]);
+	}
+}
 
 
 
@@ -236,16 +226,16 @@ int main() {
     //architecture.dat를 읽고 파일 수정
     while (fscanf(architecture,"%d,",&variable)!= EOF) {
     printf("variable:%d\n",variable);
-    hidden_N[cnt]=variable;
+    hidden_N_num[cnt]=variable;
     cnt++;
     }
 
-    output_count=hidden_N[cnt-1];
-    hidden_N[cnt-1]=0;
+    output_count=hidden_N_num[cnt-1];
+    hidden_N_num[cnt-1]=0;
     hidden=cnt-1;
 
     for(int i=0;i<10;i++){
-        printf("hidden[%d]:%d\n",i,hidden_N[i]);
+        printf("hidden[%d]:%d\n",i,hidden_N_num[i]);
     }
 
     printf("output_count%d\n",output_count);
@@ -327,15 +317,15 @@ int main() {
     fclose(validationdata);
     fclose(trainingdata);
 
-//--------------여기까지 수정 안해도 됨--------------------
 
 //weight setting
 weight_rand_setting();
 
 //-------------데이터 읽는 부분 파일 보고 수정-------------
     //추출 데이터 ebp로 training
-    FILE* learningcurve=fopen("learningcurve.txt","w");  
+    FILE* err_pointer=fopen("err.dat","w");  
     double err=0;
+    
     trainingdata=fopen("trainingdata.txt","r");
     for(int i=0;i<epoch;i++){
         rewind(trainingdata);
@@ -351,11 +341,8 @@ weight_rand_setting();
     if(i%stride==0){
         orgtime= time(NULL);
 		pTimeData=localtime(&orgtime);
-        printf("mm:%d dd:%d hh:%d min:%d secc:%d\n", pTimeData->tm_mon+1,pTimeData->tm_mday, pTimeData->tm_hour,pTimeData->tm_min,pTimeData->tm_sec);
-        printf(" epoch:%d err:%lf\n",i,err);
-        
-        printf("weight store!!\n");
-
+        fprintf(err_pointer,"epoch:%d err:%lf mm:%d dd:%d hh:%d min:%d secc:%d\n",i,err,pTimeData->tm_mon+1,pTimeData->tm_mday, pTimeData->tm_hour,pTimeData->tm_min,pTimeData->tm_sec);
+        printf("weight%d\n",i);
    // weight_name="weight";
     //printf("%s\n", weight_name);  
     }
@@ -375,9 +362,35 @@ weight_rand_setting();
     */
     }
     fclose(trainingdata); 
-    fclose(learningcurve); 
+    fclose(err_pointer); 
     //training시 특정 epoch마다 error,time이 적힌 error.dat을 작성
+  /*
+    FILE *gridtest = fopen("grid.txt", "w");
+	
+	int val_count=0;
+
+	if(gridtest==NULL){
+        printf("haha file open failed\n");
+    }
 
 
+ 	for(double i=-2.0;i<3.0;i=i+0.1){ 
+        for(double j=-2.0;j<3.0;j=j+0.1){
+            x[0]=i;
+            x[1]=j;
+            printf("x[0]%lf x[1]%lf\n",x[0],x[1]);         
+            FeedForward(x,t);
+            printf("U_last%lf\n",U_last[0]);
+            if(U_last[0]>0.5){ 
+                fprintf(gridtest,"%lf %lf %d\n",i,j,1);
+            }
+            else{
+                fprintf(gridtest,"%lf %lf %d\n",i,j,0);
+            }
+        }
+    }   
+    fclose(gridtest);
+	
+*/
     return 0;
 }
