@@ -325,7 +325,7 @@ weight_rand_setting();
     //추출 데이터 ebp로 training
     FILE* err_pointer=fopen("err.dat","w");  
     double err=0;
-    
+    char filename[10]; 
     trainingdata=fopen("trainingdata.txt","r");
     for(int i=0;i<epoch;i++){
         rewind(trainingdata);
@@ -342,7 +342,46 @@ weight_rand_setting();
         orgtime= time(NULL);
 		pTimeData=localtime(&orgtime);
         fprintf(err_pointer,"epoch:%d err:%lf mm:%d dd:%d hh:%d min:%d secc:%d\n",i,err,pTimeData->tm_mon+1,pTimeData->tm_mday, pTimeData->tm_hour,pTimeData->tm_min,pTimeData->tm_sec);
-        printf("weight%d\n",i);
+        //printf("weight%d\n",i);
+        sprintf(filename,"epoch%d.txt",i); 
+        printf("%s\n",filename);
+        FILE* weight_file_pointer=fopen(filename,"w");  
+        for (int i = 0; i < n; i++) {
+		    for (int j = 0; j < hidden_N_num[0]; j++) {
+                printf("w_first[%d][%d]:%lf\n",i,j,w_first[i][j]);
+                fprintf(weight_file_pointer,"%lf  ",w_first[i][j]);
+		    }
+	    }
+        fprintf(weight_file_pointer,"\n");
+        for (int i = 0; i < hidden - 1; i++) {
+            for (int j = 0; j < hidden_N_num[i]; j++) {
+                for (int k = 0; k < hidden_N_num[i + 1]; k++) {
+                    printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
+                    fprintf(weight_file_pointer,"%lf  ",w_middle[i][j][k]);
+                }
+            }
+        }
+        fprintf(weight_file_pointer,"\n");
+        for (int i = 0; i < output_count; i++) {
+            for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
+                printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
+                fprintf(weight_file_pointer,"%lf  ",w_last[i][j]);
+            }
+        }
+    fprintf(weight_file_pointer,"\n");
+	for (int i = 0; i < hidden; i++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+            printf("w_bias[%d][%d]:%lf\n",i,j,w_bias[i][j]);
+            fprintf(weight_file_pointer,"%lf  ",w_bias[i][j]);
+		}
+	}
+    fprintf(weight_file_pointer,"\n");
+	for (int i = 0; i < output_count; i++) {
+          printf("w_bias_output[%d]:%lf\n",i,w_bias_output[i]);
+          fprintf(weight_file_pointer,"%lf  ",w_bias_output[i]);
+	}
+       fclose(weight_file_pointer);  
+         
    // weight_name="weight";
     //printf("%s\n", weight_name);  
     }
