@@ -3,12 +3,12 @@
 #include <time.h>
 #include <stdlib.h> 
 
-int stride=100;
-int epoch=1000;
+int stride=0;
+int epoch=0;
 int hidden=0;
 int output_count=0;
-int bias = 1;
-double eta = 0.9;
+int bias=0;
+double eta=0;
 
 int hidden_N_num[10] = {0,0,0,0,0,0,0,0,0,0};
 
@@ -129,11 +129,12 @@ void Error_Back_Propagation(double x[], double t[]) {
 }
 
 double randomDouble(void) {
-  return (double)(rand()%20)/10-1.0;
+    return (double)(rand()%20)/10-1.0;
 }
 
 void weight_rand_setting(){
 	srand(1);
+    printf("start\n");
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < hidden_N_num[0]; j++) {
 		w_first[i][j]=randomDouble();
@@ -287,7 +288,7 @@ int main() {
     
     printf("input_total_cnt:%d\n",input_total_cnt);
     //총 인풋 개수 구하기 끝
-    
+
     //데이터에서 validation data,training data추출하기
     printf("input_total_cnt:%d\n",input_total_cnt);
     printf("extract_num:%d\n",input_total_cnt/10);
@@ -325,9 +326,9 @@ weight_rand_setting();
     //추출 데이터 ebp로 training
     FILE* err_pointer=fopen("err.dat","w");  
     double err=0;
-    char filename[10]; 
+    char filename[100]; 
     trainingdata=fopen("trainingdata.txt","r");
-    for(int i=0;i<epoch;i++){
+    for(int i=0;i<=epoch;i++){
         rewind(trainingdata);
         err=0;
         while (fscanf(trainingdata,"%lf %lf %lf\n",&x[0],&x[1],&t[0])!=EOF){
@@ -341,14 +342,14 @@ weight_rand_setting();
     if(i%stride==0){
         orgtime= time(NULL);
 		pTimeData=localtime(&orgtime);
-        fprintf(err_pointer,"epoch:%d err:%lf mm:%d dd:%d hh:%d min:%d secc:%d\n",i,err,pTimeData->tm_mon+1,pTimeData->tm_mday, pTimeData->tm_hour,pTimeData->tm_min,pTimeData->tm_sec);
+        fprintf(err_pointer,"epoch:%d err:%lf mm:%d dd:%d hh:%d min:%d secc:%d\n",i,err/input_total_cnt,pTimeData->tm_mon+1,pTimeData->tm_mday, pTimeData->tm_hour,pTimeData->tm_min,pTimeData->tm_sec);
         //printf("weight%d\n",i);
-        sprintf(filename,"epoch%d.txt",i); 
+        sprintf(filename,"weight%d.txt",i); 
         printf("%s\n",filename);
         FILE* weight_file_pointer=fopen(filename,"w");  
         for (int i = 0; i < n; i++) {
 		    for (int j = 0; j < hidden_N_num[0]; j++) {
-                printf("w_first[%d][%d]:%lf\n",i,j,w_first[i][j]);
+                //printf("w_first[%d][%d]:%lf\n",i,j,w_first[i][j]);
                 fprintf(weight_file_pointer,"%lf  ",w_first[i][j]);
 		    }
 	    }
@@ -356,7 +357,7 @@ weight_rand_setting();
         for (int i = 0; i < hidden - 1; i++) {
             for (int j = 0; j < hidden_N_num[i]; j++) {
                 for (int k = 0; k < hidden_N_num[i + 1]; k++) {
-                    printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
+                    //printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
                     fprintf(weight_file_pointer,"%lf  ",w_middle[i][j][k]);
                 }
             }
@@ -364,26 +365,25 @@ weight_rand_setting();
         fprintf(weight_file_pointer,"\n");
         for (int i = 0; i < output_count; i++) {
             for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
-                printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
+               // printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
                 fprintf(weight_file_pointer,"%lf  ",w_last[i][j]);
             }
         }
     fprintf(weight_file_pointer,"\n");
 	for (int i = 0; i < hidden; i++) {
 		for (int j = 0; j < hidden_N_num[i]; j++) {
-            printf("w_bias[%d][%d]:%lf\n",i,j,w_bias[i][j]);
+           // printf("w_bias[%d][%d]:%lf\n",i,j,w_bias[i][j]);
             fprintf(weight_file_pointer,"%lf  ",w_bias[i][j]);
 		}
 	}
     fprintf(weight_file_pointer,"\n");
 	for (int i = 0; i < output_count; i++) {
-          printf("w_bias_output[%d]:%lf\n",i,w_bias_output[i]);
+         // printf("w_bias_output[%d]:%lf\n",i,w_bias_output[i]);
           fprintf(weight_file_pointer,"%lf  ",w_bias_output[i]);
 	}
        fclose(weight_file_pointer);  
          
-   // weight_name="weight";
-    //printf("%s\n", weight_name);  
+   
     }
    /*
     double err_val=0;
@@ -431,5 +431,50 @@ weight_rand_setting();
     fclose(gridtest);
 	
 */
+   
+    char input_file_name[100]={0,};
+    double weight_temp=0;
+    scanf("%s",input_file_name);   
+    printf("%s",input_file_name);
+
+    FILE *pFile = NULL;
+    pFile=fopen(input_file_name,"r");
+   
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < hidden_N_num[0]; j++) {
+        fscanf(pFile,"%lf\n",&w_first[i][j]);
+        printf("w[%d][%d]:%lf\n",i,j,w_first[i][j]);
+		}
+	}
+
+	for (int i = 0; i < hidden - 1; i++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+			for (int k = 0; k < hidden_N_num[i + 1]; k++) {
+                fscanf(pFile,"%lf\n",&w_middle[i][j][k]);
+                printf("w_middle[%d][%d][%d]:%lf\n",i,j,k,w_middle[i][j][k]);
+			}
+		}
+	}
+
+	for (int i = 0; i < output_count; i++) {
+		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
+            fscanf(pFile,"%lf\n",&w_last[i][j]);
+            printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
+		}
+	}
+
+	for (int i = 0; i < hidden; i++) {
+		for (int j = 0; j < hidden_N_num[i]; j++) {
+            fscanf(pFile,"%lf\n",&w_bias[i][j]);
+            printf("w_bias[%d][%d]:%lf\n",i,j,w_bias[i][j]);
+		}
+	}
+
+	for (int i = 0; i < output_count; i++) {
+        fscanf(pFile,"%lf\n",&w_bias_output[i]);
+        printf("w_bias_output[%d]:%lf\n",i,w_bias_output[i]);
+	}
+
+    fclose(pFile);
     return 0;
 }
