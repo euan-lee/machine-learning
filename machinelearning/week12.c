@@ -2,7 +2,7 @@
 #include <math.h>
 #include <time.h>
 #include <stdlib.h> 
-
+int training=0;
 int stride=0;
 int epoch=0;
 int hidden=0;
@@ -31,8 +31,10 @@ double last_delta[2] = { 0, 0 };
 void Input_num(){
     printf("enter input number\n");
     scanf("%d",&n);
-     printf("input x number is %d\n",n);
+    fflush(stdin);
+    printf("input number is %d\n",n);
 }
+
 
 void FeedForward(double x[], double t[]){
     double S = 0;
@@ -204,7 +206,41 @@ void  show_weight(){
 }
 
 
+void GridTest(double x[], double t[]){
+    double S = 0;
 
+	for (int i = 0; i < hidden_N_num[0]; i++) {
+		S = 0;
+		for (int j = 0; j < n; j++) {
+			S += x[j] * w_first[j][i];
+		}
+		if (bias == 1) S += w_bias[0][i];
+
+		U[0][i] = 1 / (1 + exp(-S));
+	}
+
+	for (int i = 0; i < hidden - 1; i++) {
+		for (int j = 0; j < hidden_N_num[i + 1]; j++) {
+			S = 0;
+			for (int k = 0; k < hidden_N_num[i]; k++) {
+				S += U[i][k] * w_middle[i][k][j];
+			}
+			if (bias == 1) S += w_bias[i + 1][j];
+
+			U[i + 1][j] = 1 / (1 + exp(-S));
+		}
+	}
+
+	for (int i = 0; i < output_count; i++) {
+		S = 0;
+		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
+			S += U[hidden - 1][j] * w_last[i][j];
+		}
+		if (bias == 1) S += w_bias_output[i];
+
+		U_last[i] = 1 / (1 + exp(-S));
+	}
+}
 
 int main() {
     time_t orgtime; // 시간을 담을 자료형 변수 선언 
@@ -323,8 +359,8 @@ int main() {
 weight_rand_setting();
 
 //-------------데이터 읽는 부분 파일 보고 수정-------------
-    //추출 데이터 ebp로 training
-    FILE* err_pointer=fopen("err.dat","w");  
+if(training==1){
+  FILE* err_pointer=fopen("err.dat","w");  
     double err=0;
     char filename[100]; 
     trainingdata=fopen("trainingdata.txt","r");
@@ -402,51 +438,25 @@ weight_rand_setting();
     }
     fclose(trainingdata); 
     fclose(err_pointer); 
-    //training시 특정 epoch마다 error,time이 적힌 error.dat을 작성
-  /*
-    FILE *gridtest = fopen("grid.txt", "w");
-	
-	int val_count=0;
-
-	if(gridtest==NULL){
-        printf("haha file open failed\n");
-    }
+}
+    //추출 데이터 ebp로 training&&training시 특정 epoch마다 error,time이 적힌 error.dat을 작성 끝
 
 
- 	for(double i=-2.0;i<3.0;i=i+0.1){ 
-        for(double j=-2.0;j<3.0;j=j+0.1){
-            x[0]=i;
-            x[1]=j;
-            printf("x[0]%lf x[1]%lf\n",x[0],x[1]);         
-            FeedForward(x,t);
-            printf("U_last%lf\n",U_last[0]);
-            if(U_last[0]>0.5){ 
-                fprintf(gridtest,"%lf %lf %d\n",i,j,1);
-            }
-            else{
-                fprintf(gridtest,"%lf %lf %d\n",i,j,0);
-            }
-        }
-    }   
-    fclose(gridtest);
-	
-*/
-   
+//가중치 파일 읽기
     char input_file_name[100]={0,};
     double weight_temp=0;
-    scanf("%s",input_file_name);   
-    printf("%s",input_file_name);
-
+    printf("type the file name \n");
+    scanf("%s",input_file_name); 
+     fflush(stdin);  
+    printf("%s ",input_file_name);
     FILE *pFile = NULL;
     pFile=fopen(input_file_name,"r");
-   
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < hidden_N_num[0]; j++) {
         fscanf(pFile,"%lf\n",&w_first[i][j]);
         printf("w[%d][%d]:%lf\n",i,j,w_first[i][j]);
 		}
 	}
-
 	for (int i = 0; i < hidden - 1; i++) {
 		for (int j = 0; j < hidden_N_num[i]; j++) {
 			for (int k = 0; k < hidden_N_num[i + 1]; k++) {
@@ -455,14 +465,12 @@ weight_rand_setting();
 			}
 		}
 	}
-
 	for (int i = 0; i < output_count; i++) {
 		for (int j = 0; j < hidden_N_num[hidden - 1]; j++) {
             fscanf(pFile,"%lf\n",&w_last[i][j]);
             printf("w_last[%d][%d]:%lf\n",i,j,w_last[i][j]);
 		}
 	}
-
 	for (int i = 0; i < hidden; i++) {
 		for (int j = 0; j < hidden_N_num[i]; j++) {
             fscanf(pFile,"%lf\n",&w_bias[i][j]);
@@ -476,5 +484,27 @@ weight_rand_setting();
 	}
 
     fclose(pFile);
+
+
+    FILE *gridtest = fopen("grid.txt", "w");
+	int val_count=0;
+	if(gridtest==NULL){
+        printf("haha file open failed\n");
+    }
+ 	for(double i=-2.0;i<3.0;i=i+0.1){ 
+        for(double j=-2.0;j<3.0;j=j+0.1){
+            x[0]=i;
+            x[1]=j;
+            GridTest(x,t);
+            if(U_last[0]>0.5){ 
+                fprintf(gridtest,"%lf %lf %d\n",i,j,1);
+            }
+            else{
+                fprintf(gridtest,"%lf %lf %d\n",i,j,0);
+            }
+        }
+    }   
+    fclose(gridtest);
+	
     return 0;
 }
