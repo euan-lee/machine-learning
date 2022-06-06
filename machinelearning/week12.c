@@ -7,7 +7,7 @@ int stride=0;
 int epoch=0;
 int hidden=0;
 int output_count=0;
-int bias=0;
+int bias=1;
 double eta=0;
 
 int hidden_N_num[10] = {0,0,0,0,0,0,0,0,0,0};
@@ -33,6 +33,12 @@ void Input_num(){
     scanf("%d",&n);
     fflush(stdin);
     printf("input number is %d\n",n);
+}
+void Training(){
+    printf("Training?\n");
+    scanf("%d",&training);
+    fflush(stdin);
+    printf("training is %d\n",training);
 }
 
 
@@ -250,6 +256,7 @@ int main() {
     double x[10]={0,},t[2]={0};
     int variable=0;
     int cnt=0;
+    Training();
     Input_num();
 	FILE* architecture = fopen("architecture.dat", "r");
     if(NULL !=architecture)
@@ -505,6 +512,17 @@ if(training==1){
         }
     }   
     fclose(gridtest);
+        FILE *val_dat= fopen("validationdata.txt", "r");
+       double val_err=0;
+        while (fscanf(val_dat,"%lf %lf %lf\n",&x[0],&x[1],&t[0])!=EOF){
+                    //printf("x[0]:%lf,x[1]:%lf,t[0]:%lf\n",x[0],x[1],t[0]);
+                    Error_Back_Propagation(x,t);
+                    for (int i = 0; i < output_count; i++) {
+                    val_err+= fabs(t[i] - U_last[i]);
+                    }
+            }
+            printf("val_err:%lf\n",val_err);
+    
 	
     return 0;
 }
